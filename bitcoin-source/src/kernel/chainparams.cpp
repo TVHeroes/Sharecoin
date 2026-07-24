@@ -618,7 +618,14 @@ public:
         pchMessageStart[1] = 0x48; // 'H'
         pchMessageStart[2] = 0x43; // 'C'
         pchMessageStart[3] = 0x4E; // 'N' - spells SHCN (Sharecoin shareNet)
-        nDefaultPort = 18544;
+        // Was 18544 (an arbitrary compiled-in default). DNS A-records can't carry
+        // port numbers, so a bare seed hostname (or a manually-typed -addnode=host
+        // with no :port) gets connected to on whatever nDefaultPort says - which
+        // has to actually match the port real-world deployments forward/listen on
+        // (8443 - see sharecoin.duckdns.org's port-forward and every -addnode
+        // example in this repo) or the DNS seed above is silently useless: it
+        // finds the right IP but tries the wrong port and nothing connects.
+        nDefaultPort = 8443;
         nPruneAfterHeight = opts.fastprune ? 100 : 1000;
         m_assumed_blockchain_size = 0;
         m_assumed_chain_state_size = 0;
@@ -631,7 +638,13 @@ public:
 
         vFixedSeeds.clear(); //!< Regtest mode doesn't have any fixed seeds.
         vSeeds.clear();
-        vSeeds.emplace_back("dummySeed.invalid.");
+        // Real seed (not Bitcoin regtest's usual dummy placeholder) - lets a
+        // freshly started node with no -addnode/config discover a peer and
+        // join the network on its own. Only ever resolves to whichever
+        // machine currently holds the floating primary IP, so this is one
+        // bootstrap host, not a true multi-source DNS seed - still enough
+        // to get a first peer, which is all a seed needs to do.
+        vSeeds.emplace_back("sharecoin.duckdns.org.");
 
         fDefaultConsistencyChecks = true;
         m_is_mockable_chain = true;

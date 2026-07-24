@@ -110,7 +110,26 @@ home internet connection and one router, not a geographically independent
 setup - if the connection or router itself goes down, both machines go
 down together regardless of this mechanism.
 
-### Running your own network
+### Joining the main network without any manual peer configuration
+
+A freshly built/downloaded `sharecoind` with no flags beyond `-regtest`
+finds and joins the main network entirely on its own - no `-addnode`, no
+config file, nothing handed to it by another person. This works through
+a compiled-in DNS seed (`sharecoin.duckdns.org`), the same mechanism real
+Bitcoin Core uses to bootstrap mainnet/testnet nodes, pointed at this
+project's own always-on address instead. Without this, every new node's
+only route into the network was a person manually telling it where to
+look, which put a single maintainer at the center of the network's
+topology, not just as a convenience but as a structural dependency: no
+seed, no way for a stranger to ever find the network on their own.
+
+Explicit `-addnode=sharecoin.duckdns.org:8443` still works exactly as
+before and connects a little faster (skips the DNS lookup round-trip),
+but it's no longer required, this is what makes "download and run" an
+actually self-sustaining network rather than one that only grows through
+you personally.
+
+### Running your own, separate network
 
 Run the `sharecoind` you built (always with `-regtest` - see the README's
 warning on this; without it you get a real Bitcoin mainnet node instead,
