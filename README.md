@@ -149,6 +149,12 @@ resist the "last revealer" bias that a single block's own `mix_hash`
 would have. See `docs/DETAILS.md` for the full design rationale, or
 [WHITEPAPER.pdf](WHITEPAPER.pdf) for the formal writeup.
 
+**Live demo**: [sharecoin-pi.tail0b8084.ts.net/raffle](https://sharecoin-pi.tail0b8084.ts.net/raffle)
+runs a real raffle against the live network - lock in a list of entrants,
+pick a future block height, and watch the winner get drawn from that
+block's actual beacon value once it's mined. Anyone can verify the result
+themselves from the numbers shown on the page.
+
 ## License
 
 MIT, see [LICENSE](LICENSE). Bitcoin Core's own copyright is preserved
