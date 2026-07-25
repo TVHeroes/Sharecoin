@@ -57,7 +57,9 @@ genesis everyone else did.
 
 ## Contact
 https://bitcointalk.org/index.php?topic=5588928
+
 Discord - https://discord.gg/RcRWE7vbG
+
 Email - tvheroes@protonmail.com
 
 ## Contents
