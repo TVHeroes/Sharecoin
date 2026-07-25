@@ -56,7 +56,7 @@ same way, by anyone with a GPU, starting from the same publicly verifiable
 genesis everyone else did.
 
 ## Contact
-Forum https://bitcointalk.org/index.php?topic=5588928
+Forum - https://bitcointalk.org/index.php?topic=5588928
 
 Discord - https://discord.gg/RcRWE7vbG
 
