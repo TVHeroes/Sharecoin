@@ -162,7 +162,7 @@ pick a future block height, and watch the winner get drawn from that
 block's actual beacon value once it's mined. Anyone can verify the result
 themselves from the numbers shown on the page.
 
-**Blockchain Explorer** - http://sharecoin.duckdns.org/explorer/
+**Blockchain Explorer** - https://sharecoin.duckdns.org/explorer/
 
 ## License
 
