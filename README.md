@@ -145,6 +145,14 @@ anything or change any address if the machine currently serving it goes
 down; miner software just reconnects on its own within well under a
 minute. See `docs/DETAILS.md` for how that works.
 
+**Alternate/backup mining endpoint**: `79.72.76.95:10000` is a second,
+independently-synced node that isn't part of the failover above - a
+fixed address if you'd rather not rely on the auto-failover mechanism,
+or want to spread load across more than one node:
+```
+./kawpowminer -P stratum+tcp://YOUR_ADDRESS.worker1@79.72.76.95:10000 --cu-grid-size 1 --cu-streams 1 --display-interval 2
+```
+
 See `docs/DETAILS.md` for running your own node/network/Stratum proxy
 instead of joining that one, and GPU batch-size quirks at low difficulty.
 

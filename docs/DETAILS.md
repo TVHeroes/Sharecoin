@@ -89,6 +89,11 @@ Real GPU miner software other than kawpowminer (T-Rex, GMiner, NBMiner -
 anything that speaks Stratum for KawPow) can point at the same address
 directly with its own `-o`/`-P` flag.
 
+A public block explorer is available at
+[sharecoin.duckdns.org/explorer](https://sharecoin.duckdns.org/explorer/)
+for checking chain height, recent blocks, and mining activity without
+running any software yourself.
+
 **A caveat worth being honest about:** this default network is run
 informally, not as a permanent, guaranteed service, and its address
 could occasionally change. If it's unreachable, or if you'd rather run
@@ -105,10 +110,17 @@ same pool address on disconnect, so the next automatic reconnection
 attempt - typically within well under a minute - just succeeds on its
 own.
 
-Same caveat as above, just for both machines at once: this is still one
-home internet connection and one router, not a geographically independent
-setup - if the connection or router itself goes down, both machines go
-down together regardless of this mechanism.
+The two machines behind this address are on genuinely separate networks
+(not a single home internet connection/router), so they don't share a
+single point of failure the way an earlier version of this network once
+did.
+
+**A third, independently-synced node is also reachable directly at
+`79.72.76.95:10000`**, outside the failover mechanism above - a fixed
+address for anyone who'd rather not depend on the auto-failover, or who
+wants to split mining traffic across more than one node. It stays on the
+same chain via normal P2P, so blocks found on either endpoint are just
+as valid.
 
 ### Joining the main network without any manual peer configuration
 
