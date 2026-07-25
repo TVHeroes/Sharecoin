@@ -55,6 +55,11 @@ anyone before the genesis block. Every coin in circulation is mined the
 same way, by anyone with a GPU, starting from the same publicly verifiable
 genesis everyone else did.
 
+## Contact
+https://bitcointalk.org/index.php?topic=5588928
+Discord - https://discord.gg/RcRWE7vbG
+Email - tvheroes@protonmail.com
+
 ## Contents
 
 - `bitcoin-source/` - the patched Bitcoin Core source tree, builds the
