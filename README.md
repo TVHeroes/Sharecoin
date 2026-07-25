@@ -137,7 +137,7 @@ Get it from [RavenCommunity/kawpowminer's GitHub Releases](https://github.com/Ra
 network:
 
 ```
-./kawpowminer -P stratum+tcp://YOUR_ADDRESS.worker1@sharecoin.duckdns.org:10000 --cu-grid-size 1 --cu-streams 1 --display-interval 2
+./kawpowminer -P stratum+tcp://YOUR_ADDRESS.worker1@sharecoin.duckdns.org:10000 --cu-schedule spin --cu-parallel-hash 8 --cu-streams 4 --display-interval 2
 ```
 
 There's automatic failover behind this address, so you don't need to do
@@ -150,7 +150,7 @@ independently-synced node that isn't part of the failover above - a
 fixed address if you'd rather not rely on the auto-failover mechanism,
 or want to spread load across more than one node:
 ```
-./kawpowminer -P stratum+tcp://YOUR_ADDRESS.worker1@79.72.76.95:10000 --cu-grid-size 1 --cu-streams 1 --display-interval 2
+./kawpowminer -P stratum+tcp://YOUR_ADDRESS.worker1@79.72.76.95:10000 --cu-schedule spin --cu-parallel-hash 8 --cu-streams 4 --display-interval 2
 ```
 
 See `docs/DETAILS.md` for running your own node/network/Stratum proxy

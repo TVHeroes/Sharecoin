@@ -45,6 +45,10 @@ echo.
 echo Connecting to sharecoin.duckdns.org:10000 as %WALLET%.%WORKERNAME%
 echo.
 
-"%KAWPOWMINER%" -P stratum+tcp://%WALLET%.%WORKERNAME%@sharecoin.duckdns.org:10000 --cu-grid-size 1 --cu-streams 1 --display-interval 2
+REM --cu-schedule spin avoids kawpowminer's default (sync), which blocks the
+REM CPU thread waiting on the GPU instead of polling - a ~10x hashrate loss
+REM on its own. --cu-parallel-hash/--cu-streams tuned for a real RTX 3070 Ti;
+REM if your rate still seems low, try adjusting these two for your own card.
+"%KAWPOWMINER%" -P stratum+tcp://%WALLET%.%WORKERNAME%@sharecoin.duckdns.org:10000 --cu-schedule spin --cu-parallel-hash 8 --cu-streams 4 --display-interval 2
 
 pause
