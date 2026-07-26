@@ -21,6 +21,12 @@ Windows gets a portable wallet + launchers (unzip, then follow
 `sharecoin-cli`/`sharecoin-util` binaries (CLI only, no GUI - see the
 README.txt inside the tarball).
 
+**Want something even simpler?** [Sharecoin Simple Wallet](https://github.com/TVHeroes/sharecoin-simple-wallet)
+is a single portable app for casual users: open it, get a wallet, click
+a button, start mining, no config files or flags involved. It bundles
+its own GPU miner too, so there's nothing else to download separately.
+Windows only for now.
+
 ## The pitch
 
 Here's what almost every Bitcoin fork quietly throws away: all that GPU
