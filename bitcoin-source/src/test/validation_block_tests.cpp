@@ -88,6 +88,17 @@ std::shared_ptr<CBlock> MinerTestingSetup::Block(const uint256& prev_hash)
     auto pblock = std::make_shared<CBlock>(block_template->getBlock());
     pblock->hashPrevBlock = prev_hash;
     pblock->nTime = ++time;
+    // createNewBlock() builds against the real active tip, which isn't
+    // necessarily prev_hash (this helper is used to build competing/stale
+    // chains for reorg testing) - nHeight and nBits both need to track this
+    // block's actual intended position (ProgPoW's epoch derivation depends
+    // on nHeight, and LWMA retargets nBits every block), not whatever
+    // createNewBlock() computed against the real tip.
+    {
+        const CBlockIndex* prev_index{WITH_LOCK(::cs_main, return m_node.chainman->m_blockman.LookupBlockIndex(prev_hash))};
+        pblock->nHeight = static_cast<uint32_t>(prev_index->nHeight + 1);
+        pblock->nBits = GetNextWorkRequired(prev_index, pblock.get(), m_node.chainman->GetConsensus());
+    }
 
     // Make the coinbase transaction with two outputs:
     // One zero-value one that has a unique pubkey to make sure that blocks at the same height can have a different hash
@@ -114,9 +125,8 @@ std::shared_ptr<CBlock> MinerTestingSetup::FinalizeBlock(std::shared_ptr<CBlock>
 
     pblock->hashMerkleRoot = BlockMerkleRoot(*pblock);
 
-    while (!CheckProofOfWork(pblock->GetHash(), pblock->nBits, Params().GetConsensus())) {
-        ++(pblock->nNonce);
-    }
+    uint64_t max_iterations{1000000};
+    BOOST_REQUIRE(MineBlock(*pblock, /*start_nonce=*/0, max_iterations));
 
     // submit block header, so that miner can get the block height from the
     // global state and the node has the topology of the chain

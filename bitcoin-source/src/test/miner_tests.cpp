@@ -834,8 +834,8 @@ BOOST_AUTO_TEST_CASE(CreateNewBlock_validity)
         {
             // A block template does not have proof-of-work, but it might pass
             // verification by coincidence. Grind the nonce if needed:
-            while (CheckProofOfWork(block.GetHash(), block.nBits, Assert(m_node.chainman)->GetParams().GetConsensus())) {
-                block.nNonce++;
+            while (CheckProofOfWork(block, block.nBits, Assert(m_node.chainman)->GetParams().GetConsensus())) {
+                block.nNonce64++;
             }
 
             std::string reason;
@@ -880,7 +880,18 @@ BOOST_AUTO_TEST_CASE(CreateNewBlock_validity)
             if (txFirst.size() < 4)
                 txFirst.push_back(block.vtx[0]);
             block.hashMerkleRoot = BlockMerkleRoot(block);
-            block.nNonce = bi.nonce;
+            // BLOCKINFO's nonces were pre-mined for upstream's SHA-256d PoW
+            // and mean nothing under ProgPoW; block_template may also be
+            // reused across this even/odd pair, so nHeight and nBits (which
+            // ProgPoW's epoch and LWMA retargeting respectively depend on)
+            // need to be set explicitly rather than trusting whatever they
+            // were when first assembled. Grind a fresh solution instead of
+            // relying on the fixture value.
+            const CBlockIndex* prev_index{Assert(m_node.chainman)->ActiveChain().Tip()};
+            block.nHeight = static_cast<uint32_t>(current_height + 1);
+            block.nBits = GetNextWorkRequired(prev_index, &block, Assert(m_node.chainman)->GetParams().GetConsensus());
+            uint64_t max_iterations{1000000};
+            BOOST_REQUIRE(MineBlock(block, /*start_nonce=*/0, max_iterations));
         }
         // Alternate calls between submitBlock and submitSolution via the
         // Mining interface.
@@ -897,7 +908,7 @@ BOOST_AUTO_TEST_CASE(CreateNewBlock_validity)
             BOOST_REQUIRE_EQUAL(reason, "duplicate");
             BOOST_REQUIRE_EQUAL(debug, "");
         } else {
-            BOOST_REQUIRE(block_template->submitSolution(block.nVersion, block.nTime, block.nNonce, MakeTransactionRef(txCoinbase)));
+            BOOST_REQUIRE(block_template->submitSolution(block.nVersion, block.nTime, block.nNonce64, block.mix_hash, MakeTransactionRef(txCoinbase)));
         }
         {
             LOCK(cs_main);

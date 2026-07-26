@@ -102,7 +102,7 @@ void HeadersSyncSetup::SendMessage(FuzzedDataProvider& fuzzed_data_provider, CSe
 CBlockHeader ConsumeHeader(FuzzedDataProvider& fuzzed_data_provider, const uint256& prev_hash, uint32_t prev_nbits)
 {
     CBlockHeader header;
-    header.nNonce = 0;
+    header.nNonce64 = 0;
     // Either use the previous difficulty or let the fuzzer choose. The upper target in the
     // range comes from the bits value of the genesis block, which is 0x1d00ffff. The lower
     // target comes from the bits value of mainnet block 840000, which is 0x17034219.

@@ -97,6 +97,14 @@ CBlock BuildChainTestingSetup::CreateBlock(const CBlockIndex* prev,
     CBlock block{block_template->getBlock()};
     block.hashPrevBlock = prev->GetBlockHash();
     block.nTime = prev->nTime + 1;
+    // createNewBlock() builds against whatever the real active tip is, which
+    // isn't necessarily `prev` (e.g. building a side chain block-by-block) -
+    // nHeight and nBits both need to track the block's actual intended
+    // position (ProgPoW's epoch derivation depends on nHeight, and LWMA
+    // retargets nBits every block), not whatever createNewBlock() computed
+    // against the real tip.
+    block.nHeight = static_cast<uint32_t>(prev->nHeight + 1);
+    block.nBits = GetNextWorkRequired(prev, &block, m_node.chainman->GetConsensus());
 
     // Replace mempool-selected txns with just coinbase plus passed-in txns:
     block.vtx.resize(1);
@@ -111,7 +119,9 @@ CBlock BuildChainTestingSetup::CreateBlock(const CBlockIndex* prev,
         block.hashMerkleRoot = BlockMerkleRoot(block);
     }
 
-    while (!CheckProofOfWork(block.GetHash(), block.nBits, m_node.chainman->GetConsensus())) ++block.nNonce;
+    uint64_t max_iterations{1000000};
+    bool found{MineBlock(block, /*start_nonce=*/0, max_iterations)};
+    BOOST_REQUIRE(found);
 
     return block;
 }

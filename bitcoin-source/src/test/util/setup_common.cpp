@@ -424,9 +424,13 @@ TestChain100Setup::TestChain100Setup(
 
     {
         LOCK(::cs_main);
+        // This value is specific to ProgPoW - it depends on the real mined
+        // block hashes (nHeight/nNonce64/mix_hash), not just tx/script
+        // content, so it had to be recomputed after the ProgPoW migration
+        // rather than reused from upstream's SHA-256d value.
         assert(
             m_node.chainman->ActiveChain().Tip()->GetBlockHash().ToString() ==
-            "0ee6e270d6594249e548110619f7bd690695beb219b915da4a2e84e2b61ed60f");
+            "a09649f0076cf60dc83cf1942bdcf60904db16020bc0cb2a0a3d334519d25adf");
     }
 }
 
@@ -459,7 +463,9 @@ CBlock TestChain100Setup::CreateBlock(
     }
     RegenerateCommitments(block, *Assert(m_node.chainman));
 
-    while (!CheckProofOfWork(block.GetHash(), block.nBits, m_node.chainman->GetConsensus())) ++block.nNonce;
+    uint64_t max_iterations{1000000};
+    bool found{MineBlock(block, /*start_nonce=*/0, max_iterations)};
+    Assert(found);
 
     return block;
 }

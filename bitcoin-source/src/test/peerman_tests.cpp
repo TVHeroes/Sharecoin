@@ -35,7 +35,8 @@ static void mineBlock(node::NodeContext& node, FakeNodeClock& clock, std::chrono
     auto block_template{mining->createNewBlock({}, /*cooldown=*/false)};
     BOOST_REQUIRE(block_template);
     CBlock block{block_template->getBlock()};
-    while (!CheckProofOfWork(block.GetHash(), block.nBits, node.chainman->GetConsensus())) ++block.nNonce;
+    uint64_t max_iterations{1000000};
+    BOOST_REQUIRE(MineBlock(block, /*start_nonce=*/0, max_iterations));
     block.fChecked = true; // little speedup
     clock.set(curr_time); // process block at current time
     Assert(node.chainman->ProcessNewBlock(std::make_shared<const CBlock>(block), /*force_processing=*/true, /*min_pow_checked=*/true, nullptr));

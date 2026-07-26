@@ -366,9 +366,11 @@ void ReadFromStream(FuzzedDataProvider& fuzzed_data_provider, Stream& stream) no
 
 inline void FinalizeHeader(CBlockHeader& header, const ChainstateManager& chainman)
 {
-    while (!CheckProofOfWork(header.GetHash(), header.nBits, chainman.GetParams().GetConsensus())) {
-        ++(header.nNonce);
-    }
+    // Fuzz builds run with fuzz-determinism enabled (see EnableFuzzDeterminism
+    // in pow.cpp), which makes CheckProofOfWork/MineBlock a cheap bit-check
+    // rather than a real ProgPoW search, so this stays fast under fuzzing.
+    uint64_t max_iterations{1000000};
+    MineBlock(header, /*start_nonce=*/0, max_iterations);
 }
 
 #endif // BITCOIN_TEST_FUZZ_UTIL_H

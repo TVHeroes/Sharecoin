@@ -106,9 +106,9 @@ private:
 
 void HeadersGeneratorSetup::FindProofOfWork(CBlockHeader& starting_header)
 {
-    while (!CheckProofOfWork(starting_header.GetHash(), starting_header.nBits, Params().GetConsensus())) {
-        ++starting_header.nNonce;
-    }
+    uint64_t max_iterations{1000000};
+    bool found{MineBlock(starting_header, /*start_nonce=*/0, max_iterations)};
+    assert(found);
 }
 
 std::vector<CBlockHeader> HeadersGeneratorSetup::GenerateHeaders(

@@ -29,7 +29,7 @@ CBlockHeader ConsumeBlockHeader(FuzzedDataProvider& provider, uint256 prev_hash,
     header.hashMerkleRoot = uint256{}; // never used
     header.nTime = provider.ConsumeIntegral<decltype(header.nTime)>();
     header.nBits = Params().GenesisBlock().nBits; // not fuzzed because not used (validation is mocked).
-    header.nNonce = nonce_counter++;              // prevent creating multiple block headers with the same hash
+    header.nNonce64 = nonce_counter++;             // prevent creating multiple block headers with the same hash
     return header;
 }
 

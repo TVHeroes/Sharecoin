@@ -41,7 +41,7 @@ CBlockHeader ConsumeBlockHeader(FuzzedDataProvider& provider)
     header.hashMerkleRoot = g_block_hash;
     header.nTime = provider.ConsumeIntegral<decltype(header.nTime)>();
     header.nBits = Params().GenesisBlock().nBits;
-    header.nNonce = provider.ConsumeIntegral<decltype(header.nNonce)>();
+    header.nNonce64 = provider.ConsumeIntegral<decltype(header.nNonce64)>();
     return header;
 }
 

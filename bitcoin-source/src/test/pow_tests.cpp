@@ -81,58 +81,62 @@ BOOST_AUTO_TEST_CASE(get_next_work_upper_limit_actual)
     BOOST_CHECK(!PermittedDifficultyTransition(chainParams->GetConsensus(), pindexLast.nHeight+1, pindexLast.nBits, invalid_nbits));
 }
 
+// These first four cases are all rejected by DeriveTarget's own range/
+// overflow checks before ProgPoW's real hash comparison ever runs (see
+// CheckProofOfWorkImpl in pow.cpp), so a default, unmined CBlockHeader
+// stands in for the arbitrary hash the pre-ProgPoW version of this test
+// used - the header's content is irrelevant to what's being tested here.
 BOOST_AUTO_TEST_CASE(CheckProofOfWork_test_negative_target)
 {
     const auto consensus = CreateChainParams(*m_node.args, ChainType::MAIN)->GetConsensus();
-    uint256 hash;
+    CBlockHeader header;
     unsigned int nBits;
     nBits = UintToArith256(consensus.powLimit).GetCompact(true);
-    hash = uint256{1};
-    BOOST_CHECK(!CheckProofOfWork(hash, nBits, consensus));
+    BOOST_CHECK(!CheckProofOfWork(header, nBits, consensus));
 }
 
 BOOST_AUTO_TEST_CASE(CheckProofOfWork_test_overflow_target)
 {
     const auto consensus = CreateChainParams(*m_node.args, ChainType::MAIN)->GetConsensus();
-    uint256 hash;
+    CBlockHeader header;
     unsigned int nBits{~0x00800000U};
-    hash = uint256{1};
-    BOOST_CHECK(!CheckProofOfWork(hash, nBits, consensus));
+    BOOST_CHECK(!CheckProofOfWork(header, nBits, consensus));
 }
 
 BOOST_AUTO_TEST_CASE(CheckProofOfWork_test_too_easy_target)
 {
     const auto consensus = CreateChainParams(*m_node.args, ChainType::MAIN)->GetConsensus();
-    uint256 hash;
+    CBlockHeader header;
     unsigned int nBits;
     arith_uint256 nBits_arith = UintToArith256(consensus.powLimit);
     nBits_arith *= 2;
     nBits = nBits_arith.GetCompact();
-    hash = uint256{1};
-    BOOST_CHECK(!CheckProofOfWork(hash, nBits, consensus));
+    BOOST_CHECK(!CheckProofOfWork(header, nBits, consensus));
 }
 
-BOOST_AUTO_TEST_CASE(CheckProofOfWork_test_biger_hash_than_target)
+// Upstream's version picked a hash arithmetically larger than the target to
+// exercise the real hash-vs-target comparison. ProgPoW doesn't expose a bare
+// hash-vs-target comparison to hand an arbitrary value to - the real check
+// (progpow::verify) recomputes the hash itself from the header's nonce/
+// mix_hash, so an un-mined header (default nNonce64/mix_hash, i.e. nobody
+// actually solved this) against a valid, non-trivial target serves the same
+// purpose: proof-of-work that wasn't actually done must be rejected.
+BOOST_AUTO_TEST_CASE(CheckProofOfWork_test_unsolved_header)
 {
     const auto consensus = CreateChainParams(*m_node.args, ChainType::MAIN)->GetConsensus();
-    uint256 hash;
-    unsigned int nBits;
-    arith_uint256 hash_arith = UintToArith256(consensus.powLimit);
-    nBits = hash_arith.GetCompact();
-    hash_arith *= 2; // hash > nBits
-    hash = ArithToUint256(hash_arith);
-    BOOST_CHECK(!CheckProofOfWork(hash, nBits, consensus));
+    CBlockHeader header;
+    unsigned int nBits = UintToArith256(consensus.powLimit).GetCompact();
+    BOOST_CHECK(!CheckProofOfWork(header, nBits, consensus));
 }
 
 BOOST_AUTO_TEST_CASE(CheckProofOfWork_test_zero_target)
 {
     const auto consensus = CreateChainParams(*m_node.args, ChainType::MAIN)->GetConsensus();
-    uint256 hash;
+    CBlockHeader header;
     unsigned int nBits;
     arith_uint256 hash_arith{0};
     nBits = hash_arith.GetCompact();
-    hash = ArithToUint256(hash_arith);
-    BOOST_CHECK(!CheckProofOfWork(hash, nBits, consensus));
+    BOOST_CHECK(!CheckProofOfWork(header, nBits, consensus));
 }
 
 BOOST_AUTO_TEST_CASE(GetBlockProofEquivalentTime_test)

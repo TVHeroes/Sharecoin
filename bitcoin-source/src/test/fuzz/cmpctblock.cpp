@@ -268,9 +268,10 @@ FUZZ_TARGET(cmpctblock, .init = initialize_cmpctblock)
         const auto new_time = WITH_LOCK(::cs_main, return chainman.ActiveChain().Tip()->GetMedianTimePast() + 1);
 
         CBlockHeader header;
-        header.nNonce = 0;
+        header.nNonce64 = 0;
         header.hashPrevBlock = prev;
         header.nBits = g_nBits;
+        header.nHeight = height;
         header.nTime = new_time;
         header.nVersion = fuzzed_data_provider.ConsumeIntegral<int32_t>();
 
