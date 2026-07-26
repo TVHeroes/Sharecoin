@@ -835,7 +835,7 @@ public:
         return btck_block_header_get_version(impl());
     }
 
-    uint32_t Nonce() const
+    uint64_t Nonce() const
     {
         return btck_block_header_get_nonce(impl());
     }

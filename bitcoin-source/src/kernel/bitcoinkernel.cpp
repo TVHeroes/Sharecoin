@@ -1468,9 +1468,9 @@ int32_t btck_block_header_get_version(const btck_BlockHeader* header)
     return btck_BlockHeader::get(header).nVersion;
 }
 
-uint32_t btck_block_header_get_nonce(const btck_BlockHeader* header)
+uint64_t btck_block_header_get_nonce(const btck_BlockHeader* header)
 {
-    return btck_BlockHeader::get(header).nNonce;
+    return btck_BlockHeader::get(header).nNonce64;
 }
 
 int btck_block_header_to_bytes(const btck_BlockHeader* header, unsigned char output[80])

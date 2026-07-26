@@ -2024,12 +2024,14 @@ BITCOINKERNEL_API int32_t btck_block_header_get_version(
     const btck_BlockHeader* header) BITCOINKERNEL_ARG_NONNULL(1);
 
 /**
- * @brief Get the nonce from btck_BlockHeader.
+ * @brief Get the nonce from btck_BlockHeader. GPU-mined-crypto note: this is
+ * ProgPoW's 64-bit nonce (CBlockHeader::nNonce64), not upstream's original
+ * 32-bit SHA-256d nonce.
  *
  * @param[in] header    Non-null btck_BlockHeader
  * @return              Nonce
  */
-BITCOINKERNEL_API uint32_t btck_block_header_get_nonce(
+BITCOINKERNEL_API uint64_t btck_block_header_get_nonce(
     const btck_BlockHeader* header) BITCOINKERNEL_ARG_NONNULL(1);
 
 /**
