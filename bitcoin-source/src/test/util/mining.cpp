@@ -65,12 +65,14 @@ std::vector<std::shared_ptr<CBlock>> CreateBlockChain(size_t total_height, const
         block.hashMerkleRoot = BlockMerkleRoot(block);
         block.nTime = ++time;
         block.nBits = params.GenesisBlock().nBits;
-        block.nNonce = 0;
+        block.nHeight = static_cast<uint32_t>(height + 1);
 
-        while (!CheckProofOfWork(block.GetHash(), block.nBits, params.GetConsensus())) {
-            ++block.nNonce;
-            assert(block.nNonce);
-        }
+        // ProgPoW's actual proof-of-work hash needs the real MineBlock search
+        // (pow.cpp), not a manual ++nNonce/CheckProofOfWork(hash) loop -
+        // GetHash() is the block's identity hash, unrelated to its PoW hash.
+        uint64_t max_iterations{1000000};
+        bool found{::MineBlock(block, /*start_nonce=*/0, max_iterations)};
+        assert(found);
     }
     return ret;
 }
@@ -101,10 +103,9 @@ protected:
 
 COutPoint MineBlock(const NodeContext& node, std::shared_ptr<CBlock>& block)
 {
-    while (!CheckProofOfWork(block->GetHash(), block->nBits, Params().GetConsensus())) {
-        ++block->nNonce;
-        assert(block->nNonce);
-    }
+    uint64_t max_iterations{1000000};
+    bool found{::MineBlock(*block, /*start_nonce=*/0, max_iterations)};
+    assert(found);
 
     return ProcessBlock(node, block);
 }
