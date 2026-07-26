@@ -137,6 +137,22 @@ blocks, but the actual GPU proof-of-work computation only happens inside
 a separate KawPow-capable miner - **kawpowminer** (the same one Ravencoin
 uses) is the one this fork has actually been tested against.
 
+**Wait for your node to finish syncing before you trust anything it tells
+you or start mining against it.** A node still catching up to the real
+chain tip shows an incomplete balance and missing transactions, and if
+you're pointing a miner at your own node rather than a pool, it'll hand
+out mining work built on a stale, outdated chain tip - blocks found
+against that work can never be accepted by the real network, so it's
+wasted GPU-hours for zero reward, not just an inconvenience. Check with:
+
+```
+sharecoin-cli getblockchaininfo
+```
+
+and confirm `"initialblockdownload"` is `false` and `"blocks"` equals
+`"headers"`. Until both of those are true, whatever the wallet shows you
+isn't the real picture yet.
+
 Get it from [RavenCommunity/kawpowminer's GitHub Releases](https://github.com/RavenCommunity/kawpowminer/releases)
 (Linux: Ubuntu 18/20 builds, CUDA or OpenCL) - verify its published
 `.sha256sum` against the download, then point it at a live Sharecoin
