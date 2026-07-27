@@ -61,6 +61,12 @@ anyone before the genesis block. Every coin in circulation is mined the
 same way, by anyone with a GPU, starting from the same publicly verifiable
 genesis everyone else did.
 
+**The live network is stable and not expected to be reset.** Like any
+young project, its early days involved genesis/consensus changes while
+the chain was still finding its footing - that phase is over. Barring a
+genuinely serious bug that leaves no other option, the current chain is
+the one that's here to stay: mine on it, hold on it, build on it.
+
 ## Contact
 Forum - https://bitcointalk.org/index.php?topic=5588928
 
