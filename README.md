@@ -137,13 +137,27 @@ blocks, but the actual GPU proof-of-work computation only happens inside
 a separate KawPow-capable miner - **kawpowminer** (the same one Ravencoin
 uses) is the one this fork has actually been tested against.
 
+**Download the current wallet release and let it fully sync before you
+mine a single block.** An older wallet build is not just outdated, it
+can be built against a genesis/chain from before a past network change -
+that old chain is no longer valid on this network at all, so mining
+against it earns nothing no matter how much GPU time you put in. Get the
+latest build from this repo's own Releases page, and don't skip the sync
+step above just because the wallet opens and looks normal - a stale
+build can look like it's running fine while quietly following a dead
+fork.
+
 **Wait for your node to finish syncing before you trust anything it tells
 you or start mining against it.** A node still catching up to the real
 chain tip shows an incomplete balance and missing transactions, and if
 you're pointing a miner at your own node rather than a pool, it'll hand
 out mining work built on a stale, outdated chain tip - blocks found
 against that work can never be accepted by the real network, so it's
-wasted GPU-hours for zero reward, not just an inconvenience. Check with:
+wasted GPU-hours for zero reward, not just an inconvenience. **This
+applies just as much to a brand-new wallet/address you're about to mine
+to** - create it and let the node reach a confirmed sync state first,
+rather than generating an address and pointing a miner at it in the same
+breath. Check with:
 
 ```
 sharecoin-cli getblockchaininfo
@@ -152,6 +166,18 @@ sharecoin-cli getblockchaininfo
 and confirm `"initialblockdownload"` is `false` and `"blocks"` equals
 `"headers"`. Until both of those are true, whatever the wallet shows you
 isn't the real picture yet.
+
+**Your mining rewards land on the real chain regardless of what your
+miner is pointed at** - `kawpowminer` just hashes whatever work the pool
+hands it, it doesn't care about chain history. But if you separately run
+your *own* wallet/node to check or spend that balance, make sure it's
+actually connecting to the current network
+(`sharecoin.duckdns.org:8443`/`10000`, or `79.72.76.95` as the backup
+endpoint above) rather than an old address left over from a past network
+migration - an outdated wallet pointed at a retired endpoint won't just
+fail to connect, it can also carry a stale genesis and quietly sync a
+long-dead fork instead, showing a permanently-zero balance even though
+your real rewards are sitting fine on the actual live chain.
 
 Get it from [RavenCommunity/kawpowminer's GitHub Releases](https://github.com/RavenCommunity/kawpowminer/releases)
 (Linux: Ubuntu 18/20 builds, CUDA or OpenCL) - verify its published
