@@ -15,12 +15,61 @@ import secrets
 from Crypto.Hash import SHA256, RIPEMD160
 from ecdsa import SigningKey, SECP256k1
 
-PUBKEY_ADDRESS_VERSION = 111  # matches Sharecoin's base58Prefixes[PUBKEY_ADDRESS]
 SECRET_KEY_VERSION = 239      # matches Sharecoin's base58Prefixes[SECRET_KEY]
+BECH32_HRP = "shcrt"          # matches Sharecoin's bech32_hrp (sharenet/regtest)
+
+CHARSET = "qpzry9x8gf2tvdw0s3jn54khce6mua7l"
 
 
 def hash160(b: bytes) -> bytes:
     return RIPEMD160.new(SHA256.new(b).digest()).digest()
+
+
+def bech32_polymod(values):
+    generator = [0x3b6a57b2, 0x26508e6d, 0x1ea119fa, 0x3d4233dd, 0x2a1462b3]
+    chk = 1
+    for v in values:
+        top = chk >> 25
+        chk = (chk & 0x1ffffff) << 5 ^ v
+        for i in range(5):
+            chk ^= generator[i] if ((top >> i) & 1) else 0
+    return chk
+
+
+def bech32_hrp_expand(hrp):
+    return [ord(x) >> 5 for x in hrp] + [0] + [ord(x) & 31 for x in hrp]
+
+
+def bech32_create_checksum(hrp, data):
+    values = bech32_hrp_expand(hrp) + data
+    polymod = bech32_polymod(values + [0, 0, 0, 0, 0, 0]) ^ 1
+    return [(polymod >> 5 * (5 - i)) & 31 for i in range(6)]
+
+
+def bech32_encode(hrp, data):
+    combined = data + bech32_create_checksum(hrp, data)
+    return hrp + "1" + "".join(CHARSET[d] for d in combined)
+
+
+def convertbits(data, frombits, tobits, pad=True):
+    acc = 0
+    bits = 0
+    ret = []
+    maxv = (1 << tobits) - 1
+    for value in data:
+        acc = (acc << frombits) | value
+        bits += frombits
+        while bits >= tobits:
+            bits -= tobits
+            ret.append((acc >> bits) & maxv)
+    if pad and bits:
+        ret.append((acc << (tobits - bits)) & maxv)
+    return ret
+
+
+def segwit_address(hrp, witver, witprog):
+    data = [witver] + convertbits(witprog, 8, 5)
+    return bech32_encode(hrp, data)
 
 
 def main():
@@ -33,7 +82,7 @@ def main():
     compressed_pubkey = prefix + x
 
     pubkey_hash = hash160(compressed_pubkey)
-    address = base58.b58encode_check(bytes([PUBKEY_ADDRESS_VERSION]) + pubkey_hash).decode()
+    address = segwit_address(BECH32_HRP, 0, pubkey_hash)  # native segwit (P2WPKH), the current default address type
 
     wif = base58.b58encode_check(
         bytes([SECRET_KEY_VERSION]) + priv_bytes + b"\x01"  # \x01 = compressed pubkey
