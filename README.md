@@ -201,6 +201,10 @@ anything or change any address if the machine currently serving it goes
 down; miner software just reconnects on its own within well under a
 minute. See `docs/DETAILS.md` for how that works.
 
+A second, always-on mining endpoint (`79.72.76.95:10000`) is also
+available, see `docs/DETAILS.md` for details - it's a separate node, not
+part of the failover behind the default address above.
+
 See `docs/DETAILS.md` for running your own node/network/Stratum proxy
 instead of joining that one, and GPU batch-size quirks at low difficulty.
 

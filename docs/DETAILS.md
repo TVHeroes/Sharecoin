@@ -89,6 +89,14 @@ Real GPU miner software other than kawpowminer (T-Rex, GMiner, NBMiner -
 anything that speaks Stratum for KawPow) can point at the same address
 directly with its own `-o`/`-P` flag.
 
+A second, permanent mining endpoint is also available at
+`79.72.76.95:10000` - a distinct, always-on Sharecoin node run by the same
+maintainer. Unlike `sharecoin.duckdns.org`, this address is **not** behind
+any failover mechanism, so it won't automatically move if this particular
+machine goes down; it's offered as a separate, independent connection
+point for anyone who'd rather not rely on a single endpoint, not as a
+replacement for the default one.
+
 A public block explorer is available at
 [sharecoin.duckdns.org/explorer](https://sharecoin.duckdns.org/explorer/)
 for checking chain height, recent blocks, and mining activity without
