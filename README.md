@@ -42,7 +42,9 @@ the one thing every lottery, raffle, NFT reveal, matchmaking system, and
 sortition-based DAO on the internet is quietly hungry for: **randomness
 nobody can rig.** No oracle to trust, no backend quietly rolling dice in
 someone's data center, no vendor lock-in - just math, GPUs, and a chain
-that was mining anyway.
+that was mining anyway. See [USECASES.md](USECASES.md) for real, runnable
+demos of exactly this: raffles, committee sortition, data oracle rotation,
+and delayed-reveal commitments.
 
 Decentralization here isn't a promise baked in from day one - it's a
 function of who actually shows up and mines. The mechanism doesn't care
