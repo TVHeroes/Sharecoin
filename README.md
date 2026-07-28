@@ -88,6 +88,9 @@ Email - tvheroes@protonmail.com
   `docs/DETAILS.md` if you want to audit or re-derive the diff.
 - `wallet/` - prebuilt Windows binaries and `.bat` launcher scripts, see
   `docs/WINDOWS.md` - not needed on Linux.
+- `demos/` - standalone scripts built on the randomness beacon (raffles,
+  committee sortition, oracle selection, delayed-reveal commitments), see
+  `USECASES.md`.
 - `START-HERE.txt` - plain-language quick-start for anyone using the
   prebuilt Windows package from Releases, not building from source.
 - `WHITEPAPER.pdf` - formal writeup of the protocol, threat model, and
@@ -216,13 +219,21 @@ resist the "last revealer" bias that a single block's own `mix_hash`
 would have. See `docs/DETAILS.md` for the full design rationale, or
 [WHITEPAPER.pdf](WHITEPAPER.pdf) for the formal writeup.
 
+**Blockchain Explorer** - https://sharecoin.duckdns.org/explorer/
+
+## Use cases
+
+The beacon is the basis for a handful of real, runnable demos: lotteries
+and raffles, committee/jury sortition, oracle node rotation, and
+delayed-reveal commitments. See [USECASES.md](USECASES.md) for what each
+one does and a real-world scenario it fits, and [`demos/`](demos/) for the
+scripts themselves.
+
 **Live demo**: [sharecoin-pi.tail0b8084.ts.net/raffle](https://sharecoin-pi.tail0b8084.ts.net/raffle)
 runs a real raffle against the live network - lock in a list of entrants,
 pick a future block height, and watch the winner get drawn from that
 block's actual beacon value once it's mined. Anyone can verify the result
 themselves from the numbers shown on the page.
-
-**Blockchain Explorer** - https://sharecoin.duckdns.org/explorer/
 
 ## License
 
