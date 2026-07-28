@@ -1,0 +1,20 @@
+# Local venv created by build_vdf.sh
+.venv/
+
+# CMake/pip/setuptools build byproducts left inside the vendored source
+# tree by chiavdf's own setup.py (in-source cmake build, no -B builddir).
+# None of this is part of the vendored source itself.
+vendor/chiavdf/build/
+vendor/chiavdf/CMakeFiles/
+vendor/chiavdf/CMakeCache.txt
+vendor/chiavdf/cmake_install.cmake
+vendor/chiavdf/Makefile
+vendor/chiavdf/*.egg-info/
+vendor/chiavdf/dist/
+vendor/chiavdf/stress_test
+vendor/chiavdf/verifier_test
+vendor/chiavdf/src/*_test
+vendor/chiavdf/src/CMakeFiles/
+
+__pycache__/
+*.pyc

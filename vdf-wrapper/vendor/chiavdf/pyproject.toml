@@ -1,0 +1,80 @@
+[build-system]
+requires = ["setuptools>=83.0.0", "wheel", "setuptools_scm[toml]>=10.2.0", "pybind11>=3.0.4"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools_scm]
+# Patched for this vendored copy: this tree was checked in with .git
+# stripped (see src/CMakeLists.txt's provenance comment for the upstream
+# commit), so setuptools_scm can never find a tag to infer a version from
+# and always falls back to this value. Upstream's own fallback string,
+# "unknown-no-.git-directory", is not a valid PEP 440 version and made
+# `pip install .` fail outright; this must stay a valid version string.
+fallback_version = "0.0.0"
+local_scheme = "no-local-version"
+
+[tool.cibuildwheel]
+test-requires = "pytest"
+test-command = "mv {project}/chiavdf {project}/DO_NOT_IMPORT && pytest -v {project}/tests"
+skip = "cp31?t-* *-manylinux_i686 *-win32 *-musllinux_*"
+
+[tool.cibuildwheel.linux]
+environment = "BUILD_VDF_CLIENT=N"
+build-verbosity = 0
+before-all = """
+yum -y install epel-release \
+&& echo "epel-release installed" \
+&& yum -y install boost-devel lzip \
+&& echo "boost-devel and lzip installed" \
+&& curl -L https://ftp.gnu.org/gnu/gmp/gmp-6.3.0.tar.lz | tar x --lzip \
+&& cd gmp-6.3.0 \
+&& patch < ../src/lib/gmp-6.3.0.diff  \
+&& ./configure --enable-fat --enable-cxx \
+&& make && make install && cd .. && rm -rf gmp-6.3.0 \
+&& cmake --version \
+&& uname -a \
+"""
+before-build = "python -m pip install --upgrade pip"
+
+[tool.cibuildwheel.macos]
+build-verbosity = 0
+before-all = """
+set -euo pipefail
+export HOMEBREW_NO_AUTO_UPDATE=1
+
+brew_install_if_missing() {
+  pkg="$1"
+  if brew list --versions "$pkg" >/dev/null 2>&1; then
+    echo "$pkg already installed"
+    return 0
+  fi
+
+  for attempt in 1 2 3; do
+    if brew install "$pkg"; then
+      return 0
+    fi
+    echo "brew install $pkg failed (attempt $attempt), retrying..."
+    sleep $((attempt * 5))
+  done
+
+  echo "Failed to install $pkg after retries"
+  return 1
+}
+
+brew_install_if_missing gmp
+brew_install_if_missing boost
+brew_install_if_missing cmake
+"""
+before-build = "python -m pip install --upgrade pip"
+environment = {MACOSX_DEPLOYMENT_TARGET="15", SYSTEM_VERSION_COMPAT=0, BUILD_VDF_CLIENT="N"}
+
+[tool.cibuildwheel.windows]
+build-verbosity = 0
+before-all = "git clone https://github.com/Chia-Network/mpir_gc_x64.git"
+environment = {BUILD_VDF_CLIENT="N"}
+before-build = "pip install delvewheel"
+repair-wheel-command = """
+delvewheel repair -v -w {dest_dir} {wheel} \
+--no-mangle-all \
+--add-path mpir_gc_x64 \
+--add-dll mpir.dll;mpir_gc.dll;mpir_broadwell.dll;mpir_broadwell_avx.dll;mpir_bulldozer.dll;mpir_haswell.dll;mpir_piledriver.dll;mpir_sandybridge.dll;mpir_skylake_avx.dll \
+"""
