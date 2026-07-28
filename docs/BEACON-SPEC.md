@@ -83,6 +83,16 @@ edit to `Version 1`'s numbers. Each version is:
    this document. Anyone can independently verify, using only Bitcoin
    itself, that this exact text existed unchanged at the time it claims,
    with no need to trust this repository, GitHub, or its maintainer.
+   A submitted proof only becomes a completed, verifiable Bitcoin
+   anchor once its calendar servers' pending attestations are
+   *upgraded* - a step that's easy to forget and was in fact missed
+   for days at a time in the past. `.github/workflows/beacon-spec-timestamp.yml`
+   now automates both halves of this: it re-stamps the file the moment
+   its content changes on `master`, and checks once a day whether the
+   proof is upgradable yet, committing the completed proof the moment
+   it is. Deciding whether a given edit warrants a new numbered version
+   (`Version 2`, `Version 3`, ...) stays a human call, not something
+   this automation infers on its own.
 
 This does not make the parameters themselves immutable, they are usage
 conventions, not consensus rules, and may reasonably need to change. What

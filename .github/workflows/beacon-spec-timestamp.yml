@@ -1,0 +1,76 @@
+name: Beacon spec timestamping
+
+# Two separate, deliberately narrow jobs. Neither one decides whether a
+# change to BEACON-SPEC.md counts as a new numbered version (v2, v3, ...)
+# - that's a human judgment call per the file's own permanence policy,
+# not something to infer from a diff. What's safe to fully automate:
+#
+# 1. restamp: every time BEACON-SPEC.md's content changes on master,
+#    submit a fresh OpenTimestamps proof for whatever it currently says.
+#    Cheap, safe, idempotent - just keeps a proof-in-flight for the
+#    current text at all times.
+# 2. upgrade: once a day, try to upgrade any proof that's still only
+#    pending (submitted to calendar servers but not yet anchored in a
+#    real Bitcoin block) to a completed one. A no-op when nothing's
+#    pending, so daily is cheap; matches how long OTS calendars
+#    typically take to get a Bitcoin confirmation (usually well under
+#    a day, sometimes a few hours) without hammering their servers.
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'docs/BEACON-SPEC.md'
+  schedule:
+    - cron: '17 4 * * *'  # once daily, off-the-hour to avoid GitHub's cron thundering herd
+  workflow_dispatch: {}
+
+permissions:
+  contents: write  # both jobs commit and push the updated .ots proof
+
+jobs:
+  restamp:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - run: pip install opentimestamps-client
+      - name: Stamp current BEACON-SPEC.md
+        run: ots stamp docs/BEACON-SPEC.md
+      - name: Commit updated proof if changed
+        run: |
+          if ! git diff --quiet -- docs/BEACON-SPEC.md.ots; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add docs/BEACON-SPEC.md.ots
+            git commit -m "Re-stamp docs/BEACON-SPEC.md (automated)"
+            git push
+          else
+            echo "No proof change - nothing to commit."
+          fi
+
+  upgrade:
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - run: pip install opentimestamps-client
+      - name: Attempt to upgrade the beacon spec proof
+        run: ots upgrade docs/BEACON-SPEC.md.ots || true
+      - name: Commit if the proof actually got upgraded
+        run: |
+          if ! git diff --quiet -- docs/BEACON-SPEC.md.ots; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add docs/BEACON-SPEC.md.ots
+            git commit -m "Upgrade docs/BEACON-SPEC.md timestamp proof (automated)"
+            git push
+          else
+            echo "Nothing to upgrade yet - still pending, or already complete."
+          fi
