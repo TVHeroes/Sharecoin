@@ -105,4 +105,6 @@ silent edit to `Version 1`'s numbers - committed to git history, tagged
 [OpenTimestamps](https://opentimestamps.org/) (`VDF-WRAPPER-SPEC.md.ots`,
 committed alongside this file), so anyone can independently verify what
 this document said and when, without trusting this repository, GitHub, or
-its maintainer.
+its maintainer. Covered by the same `.github/workflows/spec-timestamp.yml`
+automation as docs/BEACON-SPEC.md: re-stamped on change, upgraded to a
+completed Bitcoin-anchored proof automatically once a day.

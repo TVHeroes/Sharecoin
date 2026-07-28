@@ -1,0 +1,110 @@
+name: Versioned spec timestamping
+
+# Covers every "current version and permanence policy" doc in this repo
+# that commits to an OpenTimestamps proof alongside it - currently
+# docs/BEACON-SPEC.md and docs/VDF-WRAPPER-SPEC.md. Add new files to the
+# SPEC_FILES list below if another one gets the same treatment later.
+#
+# Two separate, deliberately narrow jobs. Neither one decides whether a
+# change to one of these files counts as a new numbered version (v2,
+# v3, ...) - that's a human judgment call per each file's own permanence
+# policy, not something to infer from a diff. What's safe to fully
+# automate:
+#
+# 1. restamp: every time one of these files' content changes on master,
+#    submit a fresh OpenTimestamps proof for whatever it currently says.
+#    Cheap, safe, idempotent - just keeps a proof-in-flight for the
+#    current text at all times.
+# 2. upgrade: once a day, try to upgrade any proof that's still only
+#    pending (submitted to calendar servers but not yet anchored in a
+#    real Bitcoin block) to a completed one. A no-op when nothing's
+#    pending, so daily is cheap; matches how long OTS calendars
+#    typically take to get a Bitcoin confirmation (usually well under
+#    a day, sometimes a few hours) without hammering their servers.
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'docs/BEACON-SPEC.md'
+      - 'docs/VDF-WRAPPER-SPEC.md'
+  schedule:
+    - cron: '17 4 * * *'  # once daily, off-the-hour to avoid GitHub's cron thundering herd
+  workflow_dispatch: {}
+
+permissions:
+  contents: write  # both jobs commit and push updated .ots proofs
+
+env:
+  SPEC_FILES: "docs/BEACON-SPEC.md docs/VDF-WRAPPER-SPEC.md"
+
+jobs:
+  restamp:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - run: pip install opentimestamps-client
+      - name: Stamp any changed spec file
+        run: |
+          for f in $SPEC_FILES; do
+            if git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -qx "$f"; then
+              echo "Re-stamping $f (content changed in this push)"
+              ots stamp "$f"
+            fi
+          done
+      - name: Commit updated proofs if changed
+        run: |
+          changed=""
+          for f in $SPEC_FILES; do
+            if ! git diff --quiet -- "$f.ots" 2>/dev/null; then
+              changed="$changed $f.ots"
+            fi
+          done
+          if [ -n "$changed" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add $changed
+            git commit -m "Re-stamp changed spec file(s) (automated)"
+            git push
+          else
+            echo "No proof changes - nothing to commit."
+          fi
+
+  upgrade:
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - run: pip install opentimestamps-client
+      - name: Attempt to upgrade every spec proof
+        run: |
+          for f in $SPEC_FILES; do
+            if [ -f "$f.ots" ]; then
+              echo "Attempting upgrade for $f.ots"
+              ots upgrade "$f.ots" || true
+            fi
+          done
+      - name: Commit any proofs that actually got upgraded
+        run: |
+          changed=""
+          for f in $SPEC_FILES; do
+            if ! git diff --quiet -- "$f.ots" 2>/dev/null; then
+              changed="$changed $f.ots"
+            fi
+          done
+          if [ -n "$changed" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add $changed
+            git commit -m "Upgrade spec timestamp proof(s) (automated)"
+            git push
+          else
+            echo "Nothing to upgrade yet - still pending, or already complete."
+          fi
