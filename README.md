@@ -17,9 +17,10 @@ rather use prebuilt binaries there instead.
 **Just want to get mining, no cloning or building?** Grab a prebuilt
 package from [Releases](https://github.com/TVHeroes/sharecoin/releases/latest) -
 Windows gets a portable wallet + launchers (unzip, then follow
-[START-HERE.txt](START-HERE.txt)); Linux gets stripped `sharecoind`/
-`sharecoin-cli`/`sharecoin-util` binaries (CLI only, no GUI - see the
-README.txt inside the tarball).
+[START-HERE.txt](START-HERE.txt)); Linux gets `sharecoind`/`sharecoin-cli`/
+`sharecoin-util`/`sharecoin-qt` all in one tarball (the GUI wallet needs
+Qt6 runtime libraries already installed - see the README.txt inside the
+tarball for exact package names per distro).
 
 **Want something even simpler?** [Sharecoin Simple Wallet](https://github.com/TVHeroes/sharecoin-simple-wallet)
 is a single portable app for casual users: open it, get a wallet, click
@@ -61,11 +62,13 @@ anyone before the genesis block. Every coin in circulation is mined the
 same way, by anyone with a GPU, starting from the same publicly verifiable
 genesis everyone else did.
 
-**The live network is stable and not expected to be reset.** Like any
-young project, its early days involved genesis/consensus changes while
-the chain was still finding its footing - that phase is over. Barring a
-genuinely serious bug that leaves no other option, the current chain is
-the one that's here to stay: mine on it, hold on it, build on it.
+**The current chain (live since 2026-07-28) is the one that's here to
+stay.** Like any young project, its early days involved genesis/consensus
+changes while the network was still finding its footing, most recently a
+full rebuild that replaced the previous chain outright rather than
+migrating it - that phase is now over. Barring a genuinely serious bug
+that leaves no other option, this is the chain to mine on, hold on, and
+build on going forward.
 
 ## Contact
 Forum - https://bitcointalk.org/index.php?topic=5588928
@@ -102,16 +105,16 @@ The resulting binaries are named `sharecoind`, `sharecoin-cli`,
 any Bitcoin Core fork, just renamed and running ProgPoW/KawPow instead of
 SHA-256d.
 
-**Always run these binaries with `-regtest`.** Without it, `sharecoind`
-defaults to real Bitcoin mainnet - wrong network, wrong genesis, and in
-this fork specifically it won't even start: mainnet's genesis block was
-mined for real Bitcoin's original SHA-256d algorithm, and this fork
-checks proof-of-work with ProgPoW everywhere, including mainnet, so that
-genesis can never pass validation here. You'll see a warning about
-~800+ GB of disk space needed, immediately followed by a fatal
-`Failed to read block` crash - that combination is the tell. Every
-command in this README and in `docs/` already includes `-regtest`; if
-you type your own, don't drop it.
+**Don't pass `-regtest`.** The live Sharecoin network is this fork's own
+real mainnet (`CMainParams`) - its own genesis, its own consensus rules,
+mined with ProgPoW/KawPow from block 1, distinct from real Bitcoin's
+mainnet. Running plain `sharecoind` with no network flag connects to it
+correctly. `-regtest` switches to a separate, incompatible test chain
+("sharenet") used only for local development - a wallet or node started
+with `-regtest` will not see the live network, the live balance, or the
+live peers, and will silently sync a dead fork instead. Every command in
+this README and in `docs/` already omits it; if you're adapting a command
+from an older version of this doc or from memory, don't add it back in.
 
 ## Getting a wallet address
 
@@ -177,9 +180,8 @@ isn't the real picture yet.
 miner is pointed at** - `kawpowminer` just hashes whatever work the pool
 hands it, it doesn't care about chain history. But if you separately run
 your *own* wallet/node to check or spend that balance, make sure it's
-actually connecting to the current network
-(`sharecoin.duckdns.org:8443`/`10000`, or `79.72.76.95` as the backup
-endpoint above) rather than an old address left over from a past network
+actually connecting to the current network (`sharecoin.duckdns.org:8443`/
+`10000`) rather than an old address left over from a past network
 migration - an outdated wallet pointed at a retired endpoint won't just
 fail to connect, it can also carry a stale genesis and quietly sync a
 long-dead fork instead, showing a permanently-zero balance even though
@@ -198,14 +200,6 @@ There's automatic failover behind this address, so you don't need to do
 anything or change any address if the machine currently serving it goes
 down; miner software just reconnects on its own within well under a
 minute. See `docs/DETAILS.md` for how that works.
-
-**Alternate/backup mining endpoint**: `79.72.76.95:10000` is a second,
-independently-synced node that isn't part of the failover above - a
-fixed address if you'd rather not rely on the auto-failover mechanism,
-or want to spread load across more than one node:
-```
-./kawpowminer -P stratum+tcp://YOUR_ADDRESS.worker1@79.72.76.95:10000 --cu-schedule spin --cu-parallel-hash 8 --cu-streams 4 --display-interval 2
-```
 
 See `docs/DETAILS.md` for running your own node/network/Stratum proxy
 instead of joining that one, and GPU batch-size quirks at low difficulty.

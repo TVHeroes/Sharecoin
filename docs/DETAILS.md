@@ -115,18 +115,11 @@ The two machines behind this address are on genuinely separate networks
 single point of failure the way an earlier version of this network once
 did.
 
-**A third, independently-synced node is also reachable directly at
-`79.72.76.95:10000`**, outside the failover mechanism above - a fixed
-address for anyone who'd rather not depend on the auto-failover, or who
-wants to split mining traffic across more than one node. It stays on the
-same chain via normal P2P, so blocks found on either endpoint are just
-as valid.
-
 ### Joining the main network without any manual peer configuration
 
-A freshly built/downloaded `sharecoind` with no flags beyond `-regtest`
-finds and joins the main network entirely on its own - no `-addnode`, no
-config file, nothing handed to it by another person. This works through
+A freshly built/downloaded `sharecoind` with no flags at all finds and
+joins the main network entirely on its own - no `-addnode`, no config
+file, nothing handed to it by another person. This works through
 a compiled-in DNS seed (`sharecoin.duckdns.org`), the same mechanism real
 Bitcoin Core uses to bootstrap mainnet/testnet nodes, pointed at this
 project's own always-on address instead. Without this, every new node's
@@ -143,10 +136,11 @@ you personally.
 
 ### Running your own, separate network
 
-Run the `sharecoind` you built (always with `-regtest` - see the README's
-warning on this; without it you get a real Bitcoin mainnet node instead,
-which crashes outright in this fork - or, on Windows, `start-node.bat`
-with the prebuilt binaries - see `docs/WINDOWS.md`):
+Run the `sharecoind` you built with `-regtest` - this switches to a
+separate, isolated chain type ("sharenet") instead of the live network,
+useful for private testing without touching real coins or peers (or, on
+Windows, `start-node.bat` with the prebuilt binaries - see
+`docs/WINDOWS.md`):
 
 ```
 ./sharecoind -regtest -daemon

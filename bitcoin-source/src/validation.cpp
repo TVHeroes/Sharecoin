@@ -1850,8 +1850,12 @@ CAmount GetBlockSubsidy(int nHeight, const Consensus::Params& consensusParams)
     if (halvings >= 64)
         return 0;
 
-    CAmount nSubsidy = 50 * COIN;
-    // Subsidy is cut in half every 210,000 blocks which will occur approximately every 4 years.
+    // Mainnet rebuild (2026-07-27): 100 SHC starting subsidy, was
+    // Bitcoin's real 50 - halving interval (2,500,000 blocks at this
+    // chain's 120s spacing) is set per-chain in chainparams.cpp, read via
+    // consensusParams.nSubsidyHalvingInterval above.
+    CAmount nSubsidy = 100 * COIN;
+    // Subsidy is cut in half every halving interval (chain-specific, see nSubsidyHalvingInterval).
     nSubsidy >>= halvings;
     return nSubsidy;
 }

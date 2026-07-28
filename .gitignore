@@ -12,6 +12,10 @@ venv/
 /node-data/
 /wallet.dat
 
+# Built release packages - uploaded to GitHub Releases directly, not
+# tracked in git history (would bloat the repo with binary archives)
+/release_check/
+
 # OS
 .DS_Store
 Thumbs.db

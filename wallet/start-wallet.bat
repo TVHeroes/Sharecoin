@@ -12,4 +12,4 @@ REM the estimator has no fallback by default in modern Bitcoin Core (it's
 REM disabled for safety on mainnet). Without this, sending fails outright
 REM with "Fee estimation failed."
 if not exist "%~dp0datadir" mkdir "%~dp0datadir"
-"%~dp0sharecoin-qt.exe" -regtest -datadir="%~dp0datadir" -connect=sharecoin.duckdns.org:8443 -prune=550 -fallbackfee=0.0001
+"%~dp0sharecoin-qt.exe" -datadir="%~dp0datadir" -connect=sharecoin.duckdns.org:8443 -prune=550 -fallbackfee=0.0001
