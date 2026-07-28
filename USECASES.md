@@ -178,3 +178,20 @@ Two fuller demos exist as live web apps rather than standalone scripts:
     the same real-time-trigger scheduling the raffle demo uses (wait for
     the clock time, then take whatever height is current), since blocks
     aren't scheduled to timestamps.
+
+- **Shipping and logistics** (proposed 2026-07-28). Three pitches, all
+  reusing patterns already validated above rather than needing anything
+  new:
+  - Random customs/inspection selection: same fit as the AML
+    audit-selection entry above, no insider can predict which containers
+    get physically inspected.
+  - Sealed freight-tender bidding: the timelock-vault pattern, same
+    "operator could technically peek early" caveat as the treasury-auction
+    entry above.
+  - Overbooking/berth-slot tiebreaking: same sortition pattern, smaller
+    niche, but a fair alternative to opaque carrier discretion.
+  - Adjacent pitch already rejected elsewhere and not re-litigated here:
+    supply-chain anti-counterfeiting/provenance logging doesn't use the
+    beacon at all (it's a timestamping problem), and its usual threat
+    model (nation-state tampering) is mismatched to this chain's actual
+    hashrate.
