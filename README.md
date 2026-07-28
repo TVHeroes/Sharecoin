@@ -89,7 +89,7 @@ Email - tvheroes@protonmail.com
 - `wallet/` - prebuilt Windows binaries and `.bat` launcher scripts, see
   `docs/WINDOWS.md` - not needed on Linux.
 - `demos/` - standalone scripts built on the randomness beacon (raffles,
-  committee sortition, oracle selection, delayed-reveal commitments), see
+  committee sortition, data oracle rotation, delayed-reveal commitments), see
   `USECASES.md`.
 - `START-HERE.txt` - plain-language quick-start for anyone using the
   prebuilt Windows package from Releases, not building from source.
@@ -224,7 +224,7 @@ would have. See `docs/DETAILS.md` for the full design rationale, or
 ## Use cases
 
 The beacon is the basis for a handful of real, runnable demos: lotteries
-and raffles, committee/jury sortition, oracle node rotation, and
+and raffles, committee/jury sortition, data oracle rotation, and
 delayed-reveal commitments. See [USECASES.md](USECASES.md) for what each
 one does and a real-world scenario it fits, and [`demos/`](demos/) for the
 scripts themselves.
