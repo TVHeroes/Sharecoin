@@ -16,6 +16,16 @@ venv/
 # tracked in git history (would bloat the repo with binary archives)
 /release_check/
 
+# Vendored decred/atomicswap checkout, kept locally for reference/building
+# shcatomicswap against. Its own upstream history already lives at
+# github.com/decred/atomicswap; the actual Sharecoin-specific patch is
+# tracked in /atomicswap/shcatomicswap/ instead of vendoring the whole tree.
+/atomicswap/src/
+
+# Staging area for the separate TVHeroes/coins fork PR (Komodo electrum
+# server listing), not part of this repo.
+/komodo/
+
 # OS
 .DS_Store
 Thumbs.db
