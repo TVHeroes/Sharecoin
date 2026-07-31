@@ -92,7 +92,8 @@ beacon isn't built for.
 
 ## Also deployed live, not in `demos/`
 
-Two fuller demos exist as live web apps rather than standalone scripts:
+Live web apps rather than standalone scripts, all linked from
+[sharecoin.cc](https://sharecoin.cc):
 
 - **`raffle_app.py`** - the fuller version of the raffle mechanic above,
   actually scans for real payments to a dedicated address instead of using
@@ -102,6 +103,25 @@ Two fuller demos exist as live web apps rather than standalone scripts:
   not itself a real-money product. Unlicensed real-money gambling is a
   legal/regulatory problem independent of the code being correct, so this
   stays a simulated-credits demo.
+- **`audit_draw_app.py`** (added 2026-07-31) - the raffle/sortition
+  mechanic relabeled for the AML/compliance-audit and customs/shipping
+  inspection-selection use cases documented below: pick N candidates out
+  of a pool for closer review, with nobody able to steer which ones get
+  picked. Mechanically identical to the raffle demo, different framing.
+- **`fair_queue_app.py`** (added 2026-07-31) - a genuinely different
+  mechanic from the others: produces a full verifiable ordering of an
+  entire list (a beacon-seeded Fisher-Yates shuffle), not a subset
+  selection. Fits speaker order, PR review queues, standup order, or any
+  "who goes first" decision for a whole group.
+- **`sealed_bid_app.py`** (added 2026-07-31) - a live, multi-user version
+  of the `sharecoin-timelock-vault.py` commit-then-reveal pattern: bidders
+  submit a hash of their sealed bid before a lock height, reveal only
+  becomes possible once a target block confirms, highest valid revealed
+  bid wins. Carries the same honest limitation as the CLI timelock-vault
+  script (see above): proves the reveal happened on schedule, does not
+  stop the operator from peeking at commitments early - real
+  cryptographic timelock encryption would need identity-based encryption
+  this beacon doesn't provide.
 
 ## Evaluated and not recommended
 
@@ -178,6 +198,10 @@ Two fuller demos exist as live web apps rather than standalone scripts:
     the same real-time-trigger scheduling the raffle demo uses (wait for
     the clock time, then take whatever height is current), since blocks
     aren't scheduled to timestamps.
+  - **Built 2026-07-31**: `audit_draw_app.py` (see "Also deployed live"
+    above) - this pitch and the customs/shipping-inspection one below no
+    longer need to stay hypothetical, there's a real, live, running demo
+    of exactly this mechanic now.
 
 - **Shipping and logistics** (proposed 2026-07-28). Three pitches, all
   reusing patterns already validated above rather than needing anything
@@ -187,7 +211,8 @@ Two fuller demos exist as live web apps rather than standalone scripts:
     get physically inspected.
   - Sealed freight-tender bidding: the timelock-vault pattern, same
     "operator could technically peek early" caveat as the treasury-auction
-    entry above.
+    entry above. **Built 2026-07-31**: `sealed_bid_app.py` (see "Also
+    deployed live" above) is a live, multi-bidder version of exactly this.
   - Overbooking/berth-slot tiebreaking: same sortition pattern, smaller
     niche, but a fair alternative to opaque carrier discretion.
   - Adjacent pitch already rejected elsewhere and not re-litigated here:

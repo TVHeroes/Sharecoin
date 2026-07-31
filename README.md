@@ -2,6 +2,8 @@
 
 # Sharecoin (SHC)
 
+**Website**: [sharecoin.cc](https://sharecoin.cc) - block explorer and live demos.
+
 A real fork of Bitcoin Core's C++ source, swapping the mining
 proof-of-work algorithm from SHA-256d to ProgPoW/KawPow - the same
 GPU-favorable, ASIC-resistant algorithm Ravencoin uses. Everything else
@@ -206,10 +208,6 @@ anything or change any address if the machine currently serving it goes
 down; miner software just reconnects on its own within well under a
 minute. See `docs/DETAILS.md` for how that works.
 
-A second, always-on mining endpoint (`79.72.76.95:10000`) is also
-available, see `docs/DETAILS.md` for details - it's a separate node, not
-part of the failover behind the default address above.
-
 See `docs/DETAILS.md` for running your own node/network/Stratum proxy
 instead of joining that one, and GPU batch-size quirks at low difficulty.
 
@@ -221,7 +219,7 @@ resist the "last revealer" bias that a single block's own `mix_hash`
 would have. See `docs/DETAILS.md` for the full design rationale, or
 [WHITEPAPER.pdf](WHITEPAPER.pdf) for the formal writeup.
 
-**Blockchain Explorer** - https://sharecoin.duckdns.org/explorer/
+**Blockchain Explorer** - https://sharecoin.cc/explorer/
 
 ## Use cases
 
@@ -231,9 +229,10 @@ delayed-reveal commitments. See [USECASES.md](USECASES.md) for what each
 one does and a real-world scenario it fits, and [`demos/`](demos/) for the
 scripts themselves.
 
-**Live demo**: [sharecoin-pi.tail0b8084.ts.net/raffle](https://sharecoin-pi.tail0b8084.ts.net/raffle)
-runs a real raffle against the live network - lock in a list of entrants,
-pick a future block height, and watch the winner get drawn from that
+**Live demos**: [sharecoin.cc](https://sharecoin.cc) is the hub for all six
+web demos (raffle, roulette, random draw, audit draw, fair queue, sealed
+bid) plus the explorer. Each one runs against the live network - lock
+something in, pick a future block height, and watch it settle from that
 block's actual beacon value once it's mined. Anyone can verify the result
 themselves from the numbers shown on the page.
 
