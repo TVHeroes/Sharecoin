@@ -126,7 +126,7 @@ PaymentServer::PaymentServer(QObject* parent, bool startLocalServer)
     : QObject(parent)
 {
     // Install global event filter to catch QFileOpenEvents
-    // on Mac: sent when you click bitcoin: links
+    // on Mac: sent when you click sharecoin: links
     // other OSes: helpful when dealing with payment request files
     if (parent)
         parent->installEventFilter(this);
@@ -143,7 +143,7 @@ PaymentServer::PaymentServer(QObject* parent, bool startLocalServer)
         if (!uriServer->listen(name)) {
             // constructor is called early in init, so don't use "Q_EMIT message()" here
             QMessageBox::critical(nullptr, tr("Payment request error"),
-                tr("Cannot start bitcoin: click-to-pay handler"));
+                tr("Cannot start sharecoin: click-to-pay handler"));
         }
         else {
             connect(uriServer, &QLocalServer::newConnection, this, &PaymentServer::handleURIConnection);
@@ -154,7 +154,7 @@ PaymentServer::PaymentServer(QObject* parent, bool startLocalServer)
 PaymentServer::~PaymentServer() = default;
 
 //
-// OSX-specific way of handling bitcoin: URIs
+// OSX-specific way of handling sharecoin: URIs
 //
 bool PaymentServer::eventFilter(QObject *object, QEvent *event)
 {
@@ -189,9 +189,9 @@ void PaymentServer::handleURIOrFile(const QString& s)
         return;
     }
 
-    if (s.startsWith("bitcoin://", Qt::CaseInsensitive))
+    if (s.startsWith("sharecoin://", Qt::CaseInsensitive))
     {
-        Q_EMIT message(tr("URI handling"), tr("'bitcoin://' is not a valid URI. Use 'bitcoin:' instead."),
+        Q_EMIT message(tr("URI handling"), tr("'sharecoin://' is not a valid URI. Use 'sharecoin:' instead."),
             CClientUIInterface::MSG_ERROR);
     }
     else if (s.startsWith(BITCOIN_IPC_PREFIX, Qt::CaseInsensitive)) // sharecoin: URI

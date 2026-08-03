@@ -241,7 +241,7 @@ void WalletModel::sendCoins(WalletModelTransaction& transaction)
         std::vector<std::string> messages;
         for (const SendCoinsRecipient &rcp : transaction.getRecipients())
         {
-            if (!rcp.message.isEmpty()) { // Message from normal bitcoin:URI (bitcoin:123...?message=example)
+            if (!rcp.message.isEmpty()) { // Message from normal sharecoin:URI (sharecoin:123...?message=example)
                 messages.emplace_back(rcp.message.toStdString());
             }
         }
