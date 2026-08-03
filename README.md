@@ -30,6 +30,10 @@ a button, start mining, no config files or flags involved. It bundles
 its own GPU miner too, so there's nothing else to download separately.
 Windows only for now.
 
+**On Android?** [Sharecoin Android Wallet](https://github.com/TVHeroes/sharecoin-android-mobile-app)
+is a lightweight SPV wallet (send, receive, QR codes) for your phone -
+grab the APK from that repo's Releases page.
+
 ## The pitch
 
 Here's what almost every Bitcoin fork quietly throws away: all that GPU
