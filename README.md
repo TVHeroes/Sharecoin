@@ -104,8 +104,9 @@ Email - contact@sharecoin.cc
 - `WHITEPAPER.pdf` - formal writeup of the protocol, threat model, and
   the randomness beacon's design.
 
-Real GPU mining software (kawpowminer etc.) isn't bundled here - see
-"Mining" below.
+Real GPU mining software (kawpowminer etc.) isn't part of this source
+tree - see "Mining" below. The prebuilt Windows portable package (see
+Releases) does bundle it directly, under its own separate license.
 
 ## Building
 
@@ -151,11 +152,21 @@ Wallet**, recommended before receiving anything real). See
 
 ## Mining
 
-**You need real GPU mining software - this repo does not include it.**
-Sharecoin's own binaries (`sharecoind`/`sharecoin-qt`) validate and relay
-blocks, but the actual GPU proof-of-work computation only happens inside
-a separate KawPow-capable miner - **kawpowminer** (the same one Ravencoin
-uses) is the one this fork has actually been tested against.
+**You need real GPU mining software - this source tree does not include
+it.** Sharecoin's own binaries (`sharecoind`/`sharecoin-qt`) validate and
+relay blocks, but the actual GPU proof-of-work computation only happens
+inside a separate KawPow-capable miner - **kawpowminer** (the same one
+Ravencoin uses) is the one this fork has actually been tested against.
+
+**The Windows portable package (see Releases) bundles kawpowminer
+directly**, in `kawpowminer-windows-1.2.4/`, so `start-mining.bat` works
+out of the box with no separate download. This is the official,
+unmodified [RavenCommunity/kawpowminer](https://github.com/RavenCommunity/kawpowminer)
+v1.2.4 Windows CUDA build, GPLv3-licensed - a separate project under its
+own license, not Sharecoin's own code, bundled alongside it rather than
+combined into it (see the `NOTICE.txt` in that folder for the exact
+license/source details). If you're building from source or on Linux,
+download kawpowminer yourself instead, same as before.
 
 **Download the current wallet release and let it fully sync before you
 mine a single block.** An older wallet build is not just outdated, it
