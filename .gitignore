@@ -29,3 +29,6 @@ venv/
 # OS
 .DS_Store
 Thumbs.db
+
+# Stray Android build artifacts (belong in sharecoin-android-mobile-app, not here)
+*.apk
