@@ -15,8 +15,8 @@ import secrets
 from Crypto.Hash import SHA256, RIPEMD160
 from ecdsa import SigningKey, SECP256k1
 
-SECRET_KEY_VERSION = 239      # matches Sharecoin's base58Prefixes[SECRET_KEY]
-BECH32_HRP = "shcrt"          # matches Sharecoin's bech32_hrp (sharenet/regtest)
+SECRET_KEY_VERSION = 214      # matches Sharecoin mainnet's base58Prefixes[SECRET_KEY]
+BECH32_HRP = "shc"            # matches Sharecoin mainnet's bech32_hrp
 
 CHARSET = "qpzry9x8gf2tvdw0s3jn54khce6mua7l"
 
