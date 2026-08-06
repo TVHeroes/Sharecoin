@@ -51,9 +51,14 @@ independent network, see "Running your own network" below.
 
 ## Running your own network
 
-Run `start-node.bat` (uses the prebuilt `wallet/sharecoind.exe`/
-`sharecoin-cli.exe` directly - no WSL/Linux needed; edit the placeholder
-`RPCPASSWORD` in the script first). Stop it later with `stop-node.bat`.
+There's no `start-node.bat`/`stop-node.bat` launcher in `wallet/` yet -
+run the prebuilt `sharecoind.exe` directly instead:
+
+    wallet\sharecoind.exe -datadir=wallet\datadir
+
+(add `-daemon` to run it in the background). Stop it with
+`wallet\sharecoin-cli.exe -datadir=wallet\datadir stop`. Don't pass
+`-regtest` - see the "Mining" section above for why.
 
 You'll also need a Stratum proxy in front of it - real GPU miners speak
 Stratum, not Bitcoin's own `getblocktemplate`/`submitblock` RPC directly.
@@ -61,5 +66,7 @@ This repo does **not** bundle one; see `docs/DETAILS.md`'s "Running your
 own network" section for the proxy setup and the specific fixes it needs
 on top of the third-party project it's based on. That section is written
 generically (the proxy is plain Python, same steps regardless of OS) -
-just point it at `start-node.bat`'s RPC port, `127.0.0.1:19710` by
-default, and point miners at the proxy's own listening port instead.
+just point it at `sharecoind`'s RPC port, `127.0.0.1:8332` by default
+(mainnet; set a real `-rpcuser`/`-rpcpassword` or rely on the default
+cookie auth in `datadir`), and point miners at the proxy's own listening
+port instead.
