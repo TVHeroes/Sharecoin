@@ -156,9 +156,11 @@ would be legally unclear. To set one up yourself (plain Python, same
 steps regardless of OS):
 
 1. Clone `kralverde/ravencoin-stratum-proxy` and follow its own setup
-   instructions (Python 3.8+, `pip install -r requirements.txt` - note
-   `pysha3` may fail to build on modern Python/GCC; a `pycryptodome`-backed
-   shim for `keccak_256` is a drop-in fix if so).
+   instructions (Python 3.8+, `pip install -r requirements.txt` - on
+   modern Debian/Ubuntu, add `--break-system-packages` or use a venv, or
+   it'll fail with an "externally-managed-environment" error; separately,
+   note `pysha3` may fail to build on modern Python/GCC; a
+   `pycryptodome`-backed shim for `keccak_256` is a drop-in fix if so).
 2. Apply these fixes on top of its `stratum-converter.py` (all found and
    verified empirically against this fork's own conventions, not assumed):
    - `getblocktemplate` must be called with `"params": [{"rules": ["segwit"]}]`

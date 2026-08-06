@@ -46,27 +46,28 @@ directly with its own `-o`/`-P` flag instead of using the `.bat` file.
 
 **A caveat worth being honest about:** the default network is run
 informally, not as a permanent, guaranteed service, and its address could
-occasionally change. If it's unreachable, or you'd rather run your own
-independent network, see "Running your own network" below.
+occasionally change. If it's unreachable and you want a local sandbox to
+test against in the meantime, see "Running a local test node" below - but
+note that's a private, isolated chain for development, not a live
+alternative network with real peers or real mining rewards.
 
-## Running your own network
+## Running a local test node
 
-There's no `start-node.bat`/`stop-node.bat` launcher in `wallet/` yet -
-run the prebuilt `sharecoind.exe` directly instead:
+`start-node.bat` (uses the prebuilt `wallet/sharecoind.exe`/
+`sharecoin-cli.exe` directly - no WSL/Linux needed; edit the placeholder
+`RPCPASSWORD` in the script first) starts a **regtest** node - a private,
+isolated test chain ("sharenet"), not the live network. Stop it later
+with `stop-node.bat`. This is for local development/testing only; it
+won't connect to real peers, sync the real chain, or produce coins worth
+anything.
 
-    wallet\sharecoind.exe -datadir=wallet\datadir
-
-(add `-daemon` to run it in the background). Stop it with
-`wallet\sharecoin-cli.exe -datadir=wallet\datadir stop`. Don't pass
-`-regtest` - see the "Mining" section above for why.
-
-You'll also need a Stratum proxy in front of it - real GPU miners speak
+If you want to point a real GPU miner at your own node for testing,
+you'll also need a Stratum proxy in front of it - real GPU miners speak
 Stratum, not Bitcoin's own `getblocktemplate`/`submitblock` RPC directly.
 This repo does **not** bundle one; see `docs/DETAILS.md`'s "Running your
-own network" section for the proxy setup and the specific fixes it needs
-on top of the third-party project it's based on. That section is written
-generically (the proxy is plain Python, same steps regardless of OS) -
-just point it at `sharecoind`'s RPC port, `127.0.0.1:8332` by default
-(mainnet; set a real `-rpcuser`/`-rpcpassword` or rely on the default
-cookie auth in `datadir`), and point miners at the proxy's own listening
-port instead.
+own, separate network" section for the proxy setup and the specific
+fixes it needs on top of the third-party project it's based on. That
+section is written generically (the proxy is plain Python, same steps
+regardless of OS) - just point it at `start-node.bat`'s RPC port,
+`127.0.0.1:19710` by convention in this project's own scripts, and point
+miners at the proxy's own listening port instead.

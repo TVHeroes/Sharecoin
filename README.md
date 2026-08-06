@@ -130,10 +130,12 @@ from an older version of this doc or from memory, don't add it back in.
 
 ## Getting a wallet address
 
-Run `generate_wallet.py` (`pip install base58 pycryptodome ecdsa`) to
-generate a real secp256k1 keypair entirely offline - no node or wallet
-software required. **Keep the printed private key secret and backed up**
-- there's no recovery if it's lost.
+Run `generate_wallet.py` (`pip install base58 pycryptodome ecdsa` - on
+modern Debian/Ubuntu, add `--break-system-packages` to that command, or
+use a venv, or it'll fail with an "externally-managed-environment"
+error) to generate a real secp256k1 keypair entirely offline - no node or
+wallet software required. **Keep the printed private key secret and
+backed up** - there's no recovery if it's lost.
 
 If you built `sharecoin-qt`, it works like any Bitcoin-Qt build: create a
 wallet, then use the **Receive** tab to generate an address directly (or
