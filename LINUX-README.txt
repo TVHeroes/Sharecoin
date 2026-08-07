@@ -31,11 +31,11 @@ Example (CLI):
 
     ./sharecoind -daemon
     ./sharecoin-cli getblockchaininfo
-    ./sharecoin-cli -connect=sharecoin.duckdns.org:8443 -listen=0
+    ./sharecoin-cli -addnode=sharecoin.duckdns.org:8443 -listen=0
 
 Example (GUI wallet):
 
-    ./sharecoin-qt -connect=sharecoin.duckdns.org:8443 -fallbackfee=0.0001
+    ./sharecoin-qt -addnode=sharecoin.duckdns.org:8443 -fallbackfee=0.0001
 
 On first run, sharecoin-qt may show a one-time disk-space notice -
 just click OK, it's informational only and not a problem.
@@ -43,11 +43,15 @@ just click OK, it's informational only and not a problem.
 
 CONNECTING TO THE LIVE NETWORK
 --------------------------------
-    ./sharecoind -connect=sharecoin.duckdns.org:8443 -listen=0 -fallbackfee=0.0001 -daemon
+    ./sharecoind -addnode=sharecoin.duckdns.org:8443 -listen=0 -fallbackfee=0.0001 -daemon
 
 A freshly built/downloaded sharecoind with no flags at all also finds
 the live network on its own via a compiled-in DNS seed - the explicit
--connect above just skips the DNS lookup round-trip.
+-addnode above just gives it one known-good peer right away in addition
+to whatever the seed finds, rather than restricting it to just one peer.
+Use -addnode, not -connect - -connect is exclusive and disables normal
+peer discovery, leaving the node with exactly one peer and no fallback
+if that one node ever has a rough patch.
 
 Once running, use sharecoin-cli the same way as any Bitcoin Core node
 (getbalance, getnewaddress, sendtoaddress, etc.) - or use sharecoin-qt's

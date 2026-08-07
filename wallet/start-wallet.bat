@@ -11,5 +11,9 @@ REM for Bitcoin Core's automatic fee estimator to have real data yet, and
 REM the estimator has no fallback by default in modern Bitcoin Core (it's
 REM disabled for safety on mainnet). Without this, sending fails outright
 REM with "Fee estimation failed."
+REM -addnode (not -connect) - adds the public node as a known peer without
+REM disabling normal peer discovery. -connect is exclusive and would leave
+REM this wallet with exactly one peer and no fallback if that one node ever
+REM has a rough patch.
 if not exist "%~dp0datadir" mkdir "%~dp0datadir"
-"%~dp0sharecoin-qt.exe" -datadir="%~dp0datadir" -connect=sharecoin.duckdns.org:8443 -prune=550 -fallbackfee=0.0001
+"%~dp0sharecoin-qt.exe" -datadir="%~dp0datadir" -addnode=sharecoin.duckdns.org:8443 -prune=550 -fallbackfee=0.0001
