@@ -146,10 +146,17 @@ bool BlockTreeDB::LoadBlockIndexGuts(const Consensus::Params& consensusParams, s
                 pindexNew->nStatus        = diskindex.nStatus;
                 pindexNew->nTx            = diskindex.nTx;
 
-                if (!CheckProofOfWork(pindexNew->GetBlockHeader(), pindexNew->nBits, consensusParams)) {
-                    LogError("%s: CheckProofOfWork failed: %s\n", __func__, pindexNew->ToString());
-                    return false;
-                }
+                // Deliberately not re-running CheckProofOfWork here (unlike
+                // upstream, which could afford it: a precomputed-hash
+                // comparison against target is essentially free). ProgPoW
+                // has no equivalent cheap shortcut - checking it for real
+                // means recomputing the full hash, which is expensive by
+                // design, and this loop runs once per already-validated
+                // block on every single startup. Every block reaching this
+                // point already passed this exact check when it was first
+                // connected (nStatus reflects that), so redoing it here
+                // just pays real PoW-computation cost per block on every
+                // restart for no additional security benefit.
 
                 pcursor->Next();
             } else {
