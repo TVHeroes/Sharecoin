@@ -56,10 +56,11 @@ new_rpc = '''static RPCMethod getrandombeacon()
         "orphaned by someone else's competing block, for a bounded, quantifiable amount of "
         "influence (one bit per block they control in the window), not full control of the "
         "outcome. This does not eliminate bias entirely but bounds it to a small, known "
-        "amount that shrinks as window_size grows.\\n",
+        "amount that shrinks as window_size grows. window_size=1 is rejected: it is exactly "
+        "the single-block bias this RPC exists to prevent, with no mitigation at all.\\n",
         {
             {"start_height", RPCArg::Type::NUM, RPCArg::Optional::NO, "the first block height in the combination window"},
-            {"window_size", RPCArg::Type::NUM, RPCArg::Default{100}, "how many consecutive blocks' mix_hash values to combine (1-10000)"},
+            {"window_size", RPCArg::Type::NUM, RPCArg::Default{100}, "how many consecutive blocks' mix_hash values to combine (2-10000)"},
         },
         RPCResult{
             RPCResult::Type::OBJ, "", "",
@@ -82,8 +83,11 @@ new_rpc = '''static RPCMethod getrandombeacon()
     if (start_height < 0) {
         throw JSONRPCError(RPC_INVALID_PARAMETER, "start_height must be non-negative");
     }
-    if (window_size < 1 || window_size > 10000) {
-        throw JSONRPCError(RPC_INVALID_PARAMETER, "window_size must be between 1 and 10000");
+    if (window_size < 2 || window_size > 10000) {
+        throw JSONRPCError(RPC_INVALID_PARAMETER,
+            "window_size must be between 2 and 10000 (window_size=1 would provide no "
+            "protection against the single-block withhold-and-retry bias this RPC exists "
+            "to prevent - see docs/BEACON-SPEC.md)");
     }
 
     const int end_height{start_height + window_size - 1};

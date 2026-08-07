@@ -20,6 +20,13 @@ a consensus-level fork):
   every block in `[start_height, start_height + window_size - 1]` is on the
   active chain. It errors out, naming exactly how many more blocks are
   needed, if the window isn't fully confirmed yet.
+- `window_size` must be between 2 and 10000. `window_size=1` is rejected by
+  the RPC itself, not just discouraged in docs: a window of one block is
+  exactly the naive single-`mix_hash` design this beacon exists to replace,
+  with zero protection against the withhold-and-retry bias described above.
+  Any `window_size` above 1 still provides only bounded, not complete,
+  protection (see the table below) - this floor removes the one value that
+  provides *no* protection at all, it does not certify 2 as a safe choice.
 - The value itself is the SHA-256 of the `mix_hash` values of that window's
   blocks, concatenated in order. Any node can recompute it independently
   from data it has already validated.
