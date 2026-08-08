@@ -1,0 +1,4 @@
+# Shell scripts must stay LF - a CRLF shebang line breaks execution on
+# Linux entirely ("bad interpreter" error), and these get shipped straight
+# into the Linux release tarball as-is.
+*.sh text eol=lf

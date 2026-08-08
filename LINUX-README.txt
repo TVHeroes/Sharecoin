@@ -17,6 +17,20 @@ that also cover it.) sharecoind/sharecoin-cli/sharecoin-util have no
 such requirement - they run standalone.
 
 
+QUICK START - JUST WANT A WALLET?
+------------------------------------
+Run:
+
+    ./start-wallet.sh
+
+That's it - it launches sharecoin-qt with the right flags already set
+(connected to the live network, pruned to keep disk use small, a
+sensible fallback fee), using a "datadir" folder right next to the
+script so it doesn't touch your home directory. No need to read any
+further unless you want the CLI daemon instead, or want to understand
+what the script is doing under the hood - see its own comments for that.
+
+
 DON'T PASS -regtest
 --------------------
 The live Sharecoin network is this fork's own real mainnet - its own
